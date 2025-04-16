@@ -1,37 +1,24 @@
-[![GitHub version](https://badge.fury.io/gh/Leaflet%2Fleaflet.draw.svg)](https://badge.fury.io/gh/Leaflet%2Fleaflet.draw)
-[![npm version](https://badge.fury.io/js/leaflet-draw.svg)](https://badge.fury.io/js/leaflet-draw)
-[![NPM Downloads](https://img.shields.io/npm/dt/leaflet-draw.svg)](https://www.npmjs.com/package/leaflet-draw)
-[![Bower version](https://badge.fury.io/bo/leaflet.draw.svg)](https://badge.fury.io/bo/leaflet.draw)
-[![Build Status](https://travis-ci.org/Leaflet/Leaflet.draw.svg?branch=master)](https://travis-ci.org/Leaflet/Leaflet.draw)
-[![Leaflet.draw Chat](https://badges.gitter.im/Leaflet/Leaflet.draw.svg)](https://gitter.im/Leaflet/Leaflet.draw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![GitHub issues](https://img.shields.io/github/issues/Leaflet/Leaflet.draw.svg)](https://github.com/Leaflet/Leaflet.draw/issues)
-[![GitHub forks](https://img.shields.io/github/forks/Leaflet/Leaflet.draw.svg)](https://github.com/Leaflet/Leaflet.draw/network)
-[![GitHub stars](https://img.shields.io/github/stars/Leaflet/Leaflet.draw.svg)](https://github.com/Leaflet/Leaflet.draw/stargazers)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Leaflet/Leaflet.draw/master/MIT-LICENSE.md)
+[![npm version](https://badge.fury.io/js/leaflet-scribe.svg)](https://badge.fury.io/js/leaflet-scribe)
+[![NPM Downloads](https://img.shields.io/npm/dt/leaflet-scribe.svg)](https://www.npmjs.com/package/leaflet-scribe)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/yusufarsln98/leaflet-scribe/refs/heads/master/MIT-LICENSE.md)
 
-# Leaflet.draw
+# Leaflet Scribe
 Adds support for drawing and editing vectors and markers on [Leaflet maps](https://github.com/Leaflet/Leaflet).
+
+> **Note:** Leaflet Scribe is forked from the original Leaflet drawing tool (leaflet-draw) with enhancements and improvements.
 
 Supports [Leaflet](https://github.com/Leaflet/Leaflet/releases) 0.7.x and 1.0.0+ branches.
 
-Please check out our [Api Documentation](https://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html)
-
-#### Upgrading from Leaflet.draw 0.1
-
-Leaflet.draw 0.2.0 changes a LOT of things from 0.1. Please see [BREAKING CHANGES](https://github.com/Leaflet/Leaflet.draw/blob/master/BREAKINGCHANGES.md) for how to upgrade.
-
 ## In this readme
 
-- [Customizing Language](#customizing-language-and-text-in-leafletdraw)
+- [Customizing Language](#customizing-language-and-text-in-leaflet-scribe)
 - [Common tasks](#common-tasks)
 - [Contributing](#contributing)
 - [Thanks](#thanks)
 
-## Customizing language and text in Leaflet.draw
+## Customizing language and text in Leaflet Scribe
 
-Leaflet.draw uses the `L.drawLocal` configuration object to set any text used in the plugin. Customizing this will allow support for changing the text or supporting another language.
-
-See [Leaflet.draw.js](https://github.com/Leaflet/Leaflet.draw/blob/master/src/Leaflet.draw.js) for the default strings.
+Leaflet Scribe uses the `L.drawLocal` configuration object to set any text used in the plugin. Customizing this will allow support for changing the text or supporting another language.
 
 E.g.
 
@@ -47,7 +34,7 @@ E.g.
 
 The following examples outline some common tasks.
 
-### Example Leaflet.draw config
+### Example Leaflet Scribe config
 
 The following example will show you how to:
 
@@ -83,16 +70,16 @@ The following example will show you how to:
                 }
             },
             polygon: {
-                allowIntersection: false, // Restricts shapes to simple polygons
+                allowIntersection: false,
                 drawError: {
-                    color: '#e1e100', // Color the shape will turn when intersects
-                    message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
+                    color: '#e1e100',
+                    message: '<strong>Oh snap!<strong> you can\'t draw that!'
                 },
                 shapeOptions: {
                     color: '#bada55'
                 }
             },
-            circle: false, // Turns off this drawing tool
+            circle: false,
             rectangle: {
                 shapeOptions: {
                     clickable: false
@@ -103,7 +90,7 @@ The following example will show you how to:
             }
         },
         edit: {
-            featureGroup: editableLayers, //REQUIRED!!
+            featureGroup: editableLayers,
             remove: false
         }
     };
@@ -125,7 +112,7 @@ The following example will show you how to:
 
 ### Changing a drawing handlers options
 
-You can change a draw handlers options after initialisation by using the `setDrawingOptions` method on the Leaflet.draw control.
+You can change a draw handlers options after initialisation by using the `setDrawingOptions` method on the Leaflet Scribe control.
 
 E.g. to change the colour of the rectangle:
 
@@ -139,10 +126,8 @@ drawControl.setDrawingOptions({
 });
 ```
 
-# Contributing
+## Contributing
  
-## Testing
-
 To test you can install the npm dependencies:
 
     npm install
@@ -151,24 +136,6 @@ and then use:
 
     jake test
 
-## Documentation
-
-Documentation is build with Leafdoc, to generate the documentation use
-
-    jake docs
-
-and the generated html documentation is saved to `./docs/leaflet-draw-latest.html`
-
 ## Thanks
 
-Touch friendly version of Leaflet.draw was created by Michael Guild (https://github.com/michaelguild13).
-
-The touch support was initiated due to a demand for it at National Geographic for their Map Maker Projected (http://mapmaker.education.nationalgeographic.com/) that was created by Michael Guild and Daniel Schep (https://github.com/dschep)
-
-Thanks so much to [@brunob](https://github.com/brunob), [@tnightingale](https://github.com/tnightingale), and [@shramov](https://github.com/shramov). I got a lot of ideas from their Leaflet plugins.
-
-All the [contributors](https://github.com/Leaflet/Leaflet.draw/graphs/contributors) and issue reporters of this plugin rock. Thanks for tidying up my mess and keeping the plugin on track.
-
-The icons used for some of the toolbar buttons are either from http://glyphicons.com/ or inspired by them. <3 Glyphicons!
-
-Finally, [@mourner](https://github.com/mourner) is the man! Thanks for dedicating so much of your time to create the gosh darn best JavaScript mapping library around.
+Touch friendly version was created by Michael Guild (https://github.com/michaelguild13).

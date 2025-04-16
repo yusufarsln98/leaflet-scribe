@@ -1,4 +1,5 @@
 Copyright 2012-2017 Jon West, Jacob Toye, and Leaflet
+Copyright 2025 Yusuf Arslan
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

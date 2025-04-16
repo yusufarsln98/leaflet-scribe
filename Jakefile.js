@@ -13,7 +13,6 @@
  */
 
 var build = require('./build/build.js'),
-    buildDocs = require('./build/docs'),
     git = require('git-rev');
 
 function hint(msg, args) {
@@ -60,10 +59,6 @@ task('test', ['lint', 'lintspec'], {async: true}, function () {
     build.test(complete);
 });
 
-desc('Build documentation');
-task('docs', {}, function () {
-    buildDocs();
-});
 
 task('default', ['build', 'test']);
 
