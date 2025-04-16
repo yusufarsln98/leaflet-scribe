@@ -39,7 +39,9 @@
     "build": "jake build -f ./Jakefile.js",
     "test": "jake test",
     "docs": "jake docs",
-    "release": "./build/publish.sh"
+    "release": "./build/publish.sh",
+    "release:win": "powershell -File .\\build\\publish.ps1"
+
   },
   "repository": {
     "type": "git",
