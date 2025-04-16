@@ -18,6 +18,7 @@ git add \
     dist/leaflet.draw.css \
     dist/leaflet.draw-src.css \
     docs/* \
+		index.d.ts `
     -f
 
 git commit -m "v$VERSION"
