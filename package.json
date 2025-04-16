@@ -33,7 +33,8 @@
   },
   "files": [
     "dist/*",
-    "docs/*"
+    "docs/*",
+		"index.d.ts"
   ],
   "scripts": {
     "build": "jake build -f ./Jakefile.js",
