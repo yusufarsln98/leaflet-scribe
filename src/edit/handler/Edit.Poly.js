@@ -22,7 +22,7 @@ L.Edit.Poly = L.Handler.extend({
 	// Compatibility method to normalize Poly* objects
 	// between 0.7.x and 1.0+
 	_defaultShape: function () {
-		var isFlat = L.LineUtil.isFlat || L.Polyline._flat;
+		var isFlat = L.LineUtil.isFlat;
 		if (!isFlat) {
 			return this._poly._latlngs;
 		}
@@ -118,7 +118,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	// Compatibility method to normalize Poly* objects
 	// between 0.7.x and 1.0+
 	_defaultShape: function () {
-		var isFlat = L.LineUtil.isFlat || L.Polyline._flat;
+		var isFlat = L.LineUtil.isFlat;
 		if (!isFlat) {
 			return this._latlngs;
 		}
