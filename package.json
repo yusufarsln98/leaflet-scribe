@@ -1,23 +1,23 @@
 {
   "name": "leaflet-scribe",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Vector drawing plugin for Leaflet",
   "devDependencies": {
-    "eslint": "^3.5.0 <3.6.0",
+    "eslint": "^9.39.2",
     "eslint-config-mourner": "^2.0.3",
     "git-rev": "^0.2.1",
     "happen": "^0.3.2",
-    "jake": "^8.0.15",
-    "karma": "^1.7.1",
+    "jake": "^10.9.4",
+    "karma": "^6.4.4",
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "~1.1.1",
     "karma-firefox-launcher": "~1.0.0",
     "karma-mocha": "^1.2.0",
-    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.4",
     "karma-safari-launcher": "~1.0.0",
-    "leafdoc": "^1.4.0",
+    "leafdoc": "^1.4.1",
     "leaflet": "^1.0.1",
-    "mocha": "^3.5.3",
+    "mocha": "^11.7.5",
     "phantomjs-prebuilt": "^2.1.16",
     "prosthetic-hand": "^1.3.1",
     "source-map": "^0.5.7",
@@ -34,7 +34,7 @@
   "files": [
     "dist/*",
     "docs/*",
-		"index.d.ts"
+    "index.d.ts"
   ],
   "scripts": {
     "build": "jake build -f ./Jakefile.js",
@@ -42,7 +42,6 @@
     "docs": "jake docs",
     "release": "./build/publish.sh",
     "release:win": "powershell -File .\\build\\publish.ps1"
-
   },
   "repository": {
     "type": "git",

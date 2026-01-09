@@ -132,9 +132,6 @@ To test you can install the npm dependencies:
 
     npm install
 
-and then use:
-
-    jake test
 
 ## Thanks
 
