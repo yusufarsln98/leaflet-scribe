@@ -1,6 +1,6 @@
 {
   "name": "leaflet-scribe",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Vector drawing plugin for Leaflet",
   "devDependencies": {
     "eslint": "^3.5.0 <3.6.0",
@@ -34,7 +34,7 @@
   "files": [
     "dist/*",
     "docs/*",
-		"index.d.ts"
+    "index.d.ts"
   ],
   "scripts": {
     "build": "jake build -f ./Jakefile.js",
@@ -42,7 +42,6 @@
     "docs": "jake docs",
     "release": "./build/publish.sh",
     "release:win": "powershell -File .\\build\\publish.ps1"
-
   },
   "repository": {
     "type": "git",
