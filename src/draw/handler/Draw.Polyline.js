@@ -213,7 +213,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 	},
 
 	_finishShape: function () {
-		var latlngs = this._poly._defaultShape ? this._poly._defaultShape() : this._poly.getLatLngs();
+		var latlngs = L.GeometryUtil.getDefaultShape(this._poly);
 		var intersects = this._poly.newLatLngIntersects(latlngs[latlngs.length - 1]);
 
 		if ((!this.options.allowIntersection && intersects) || !this._shapeIsValid()) {

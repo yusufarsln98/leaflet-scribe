@@ -160,6 +160,17 @@
 			//If Version is == 0.7.*
 			return parseInt(version[0], 10) === 0 && parseInt(version[1], 10) === 7;
 		},
+
+		// @method getDefaultShape(poly): LatLng[]
+		// Returns the default shape (first ring) of a Polyline or Polygon.
+		// Uses L.LineUtil.isFlat to avoid the deprecated L.Polyline._flat method.
+		getDefaultShape: function (poly) {
+			var latlngs = poly.getLatLngs();
+			if (!L.LineUtil.isFlat) {
+				return latlngs;
+			}
+			return L.LineUtil.isFlat(latlngs) ? latlngs : latlngs[0];
+		},
 	});
 
 })();
