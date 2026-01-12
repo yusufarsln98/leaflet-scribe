@@ -2,33 +2,35 @@
 module.exports = function (config) {
 
 	var libSources = require(__dirname+'/../build/build.js').getFiles();
-	var leafletSources = require(__dirname+'/../node_modules/leaflet/build/build.js').getFiles();
-
-	for (var i=0; i < leafletSources.length; i++) {
-		leafletSources[i] = __dirname+"/../node_modules/leaflet/" + leafletSources[i];
-	}
 
 	var files = [
 		"spec/before.js",
 		"spec/sinon.js",
-		"spec/expect.js"
-	].concat(leafletSources, libSources, [
+		"spec/expect.js",
+		"node_modules/leaflet/dist/leaflet-src.js"
+	].concat(libSources, [
 		"spec/after.js",
 		"node_modules/happen/happen.js",
 		"node_modules/prosthetic-hand/dist/prosthetic-hand.js",
 		"spec/suites/SpecHelper.js",
 		"spec/suites/**/*.js",
 		"dist/*.css",
-		{pattern: "dist/images/*.png", included: false}
+		"node_modules/leaflet/dist/leaflet.css",
+		{pattern: "dist/images/*.png", included: false, served: true},
+		{pattern: "node_modules/leaflet/dist/images/*.png", included: false, served: true}
 	]);
 
 	config.set({
 		// base path, that will be used to resolve files and exclude
 		basePath: '../',
 
+		proxies: {
+			'/dist/images/': '/base/dist/images/',
+			'/images/': '/base/node_modules/leaflet/dist/images/'
+		},
 		plugins: [
 			'karma-mocha',
-			'karma-phantomjs-launcher'],
+			'karma-chrome-launcher'],
 
 		// frameworks to use
 		frameworks: ['mocha'],
@@ -63,20 +65,17 @@ module.exports = function (config) {
 		// - PhantomJS
 		// - IE (only Windows)
 		browsers: [
-			'PhantomJSCustom'
+			'ChromeHeadless'
 		],
 
 		customLaunchers: {
-			'PhantomJSCustom': {
-				base: 'PhantomJS',
-				flags: ['--load-images=true'],
-				options: {
-					onCallback: function (data) {
-						if (data.render) {
-							page.render(data.render);
-						}
-					}
-				}
+			'ChromeHeadless': {
+				base: 'Chrome',
+				flags: [
+					'--headless',
+					'--disable-gpu',
+					'--no-sandbox'
+				]
 			}
 		},
 
