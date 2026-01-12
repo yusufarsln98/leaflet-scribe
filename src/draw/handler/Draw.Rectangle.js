@@ -78,7 +78,7 @@ L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 			latLngs, area, subtext;
 
 		if (shape) {
-			latLngs = this._shape._defaultShape ? this._shape._defaultShape() : this._shape.getLatLngs();
+			latLngs = L.GeometryUtil.getDefaultShape(this._shape);
 			area = L.GeometryUtil.geodesicArea(latLngs);
 			subtext = showArea ? L.GeometryUtil.readableArea(area, this.options.metric) : '';
 		}

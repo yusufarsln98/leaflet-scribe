@@ -92,11 +92,8 @@ L.Polyline.include({
 	},
 
 	_getProjectedPoints: function () {
-		if (!this._defaultShape) {
-			return this._originalPoints;
-		}
 		var points = [],
-			_shape = this._defaultShape();
+			_shape = L.GeometryUtil.getDefaultShape(this);
 
 		for (var i = 0; i < _shape.length; i++) {
 			points.push(this._map.latLngToLayerPoint(_shape[i]));
