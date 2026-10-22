@@ -1,17 +1,38 @@
-node_modules
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# editor
+.vscode/*
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
-tmp/**/*
-.idea
-*.iml
-_site
-*.sublime-*
-dist/*.js
-dist/*.css
-dist/*.map
+Thumbs.db
+
+# env
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+
+# typescript
+*.tsbuildinfo
+
+# demo build / vite
+build/
+.next/
+out/
+.vercel/
+
+# coverage
 coverage/
-*.js.html
-.mailmap
-bower.json
-component.json
-debug/local/
-Gemfile.lock

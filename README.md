@@ -1,141 +1,190 @@
-[![npm version](https://badge.fury.io/js/leaflet-scribe.svg)](https://badge.fury.io/js/leaflet-scribe)
-[![NPM Downloads](https://img.shields.io/npm/dt/leaflet-scribe.svg)](https://www.npmjs.com/package/leaflet-scribe)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/yusufarsln98/leaflet-scribe/refs/heads/master/MIT-LICENSE.md)
-
 # Leaflet Scribe
-Adds support for drawing and editing vectors and markers on [Leaflet maps](https://github.com/Leaflet/Leaflet).
 
-> **Note:** Leaflet Scribe is forked from the original Leaflet drawing tool (leaflet-draw) with enhancements and improvements.
+[![npm version](https://badge.fury.io/js/leaflet-scribe.svg)](https://www.npmjs.com/package/leaflet-scribe)
+[![NPM Downloads](https://img.shields.io/npm/dt/leaflet-scribe.svg)](https://www.npmjs.com/package/leaflet-scribe)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
-Supports [Leaflet](https://github.com/Leaflet/Leaflet/releases) 0.7.x and 1.0.0+ branches.
+Vector drawing and editing toolkit for [Leaflet](https://leafletjs.com/) maps — draw and edit polylines, polygons, rectangles, circles, circle markers, and markers with full TypeScript types and optional [React-Leaflet](https://react-leaflet.js.org/) bindings (`leaflet-scribe/react`).
 
-## In this readme
+> **Note:** `react-leaflet-scribe` has been merged into `leaflet-scribe/react`. Import `<EditControl>` directly from `leaflet-scribe/react`.
 
-- [Customizing Language](#customizing-language-and-text-in-leaflet-scribe)
-- [Common tasks](#common-tasks)
-- [Contributing](#contributing)
-- [Thanks](#thanks)
+---
 
-## Customizing language and text in Leaflet Scribe
+## Package Exports
 
-Leaflet Scribe uses the `L.drawLocal` configuration object to set any text used in the plugin. Customizing this will allow support for changing the text or supporting another language.
+| Import | Description | React Required? |
+| --- | --- | --- |
+| `leaflet-scribe` / `leaflet-scribe/core` | Framework-agnostic core plugin (`L.Control.Draw`, `L.Draw`, `L.Edit`, `L.GeometryUtil`, `L.LatLngUtil`, `L.drawLocal`) | No |
+| `leaflet-scribe/react` | React-Leaflet `<EditControl>` component, helpers, and TypeScript types | Yes (optional peer) |
+| `leaflet-scribe/styles.css` | Toolbar, tooltip, and vertex handle stylesheet (also available at `leaflet-scribe/dist/leaflet.draw.css`) | No |
 
-E.g.
+---
 
-```js
-    // Set the button title text for the polygon button
-    L.drawLocal.draw.toolbar.buttons.polygon = 'Draw a sexy polygon!';
-    
-    // Set the tooltip start text for the rectangle
-    L.drawLocal.draw.handlers.rectangle.tooltip.start = 'Not telling...';
+## Installation
+
+```bash
+npm install leaflet-scribe leaflet
 ```
 
-## Common tasks
+If using React-Leaflet (`leaflet-scribe/react`):
 
-The following examples outline some common tasks.
-
-### Example Leaflet Scribe config
-
-The following example will show you how to:
-
-1. Change the position of the control's toolbar.
-2. Customize the styles of a vector layer.
-3. Use a custom marker.
-4. Disable the delete functionality.
-
-```js
-    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
-        cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18}),
-        map = new L.Map('map', {layers: [cloudmade], center: new L.LatLng(-37.7772, 175.2756), zoom: 15 });
-    
-    var editableLayers = new L.FeatureGroup();
-    map.addLayer(editableLayers);
-    
-    var MyCustomMarker = L.Icon.extend({
-        options: {
-            shadowUrl: null,
-            iconAnchor: new L.Point(12, 12),
-            iconSize: new L.Point(24, 24),
-            iconUrl: 'link/to/image.png'
-        }
-    });
-    
-    var options = {
-        position: 'topright',
-        draw: {
-            polyline: {
-                shapeOptions: {
-                    color: '#f357a1',
-                    weight: 10
-                }
-            },
-            polygon: {
-                allowIntersection: false,
-                drawError: {
-                    color: '#e1e100',
-                    message: '<strong>Oh snap!<strong> you can\'t draw that!'
-                },
-                shapeOptions: {
-                    color: '#bada55'
-                }
-            },
-            circle: false,
-            rectangle: {
-                shapeOptions: {
-                    clickable: false
-                }
-            },
-            marker: {
-                icon: new MyCustomMarker()
-            }
-        },
-        edit: {
-            featureGroup: editableLayers,
-            remove: false
-        }
-    };
-    
-    var drawControl = new L.Control.Draw(options);
-    map.addControl(drawControl);
-    
-    map.on(L.Draw.Event.CREATED, function (e) {
-        var type = e.layerType,
-            layer = e.layer;
-    
-        if (type === 'marker') {
-            layer.bindPopup('A popup!');
-        }
-    
-        editableLayers.addLayer(layer);
-    });
+```bash
+npm install leaflet-scribe leaflet react react-dom react-leaflet
 ```
 
-### Changing a drawing handlers options
+---
 
-You can change a draw handlers options after initialisation by using the `setDrawingOptions` method on the Leaflet Scribe control.
+## Usage (Vanilla JS / TypeScript)
 
-E.g. to change the colour of the rectangle:
+```ts
+import L from 'leaflet'
+import 'leaflet-scribe'
+import 'leaflet/dist/leaflet.css'
+import 'leaflet-scribe/styles.css'
 
-```js
-drawControl.setDrawingOptions({
+const map = L.map('map').setView([51.505, -0.09], 13)
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors',
+}).addTo(map)
+
+const drawnItems = new L.FeatureGroup()
+map.addLayer(drawnItems)
+
+const drawControl = new L.Control.Draw({
+  position: 'topright',
+  draw: {
+    polyline: {
+      shapeOptions: {
+        color: '#f357a1',
+        weight: 6,
+      },
+    },
+    polygon: {
+      allowIntersection: false,
+      showArea: true,
+      shapeOptions: {
+        color: '#3388ff',
+      },
+    },
+    circle: false,
     rectangle: {
-    	shapeOptions: {
-        	color: '#0000FF'
-        }
-    }
-});
+      shapeOptions: {
+        clickable: false,
+      },
+    },
+    marker: true,
+    circlemarker: false,
+  },
+  edit: {
+    featureGroup: drawnItems,
+    remove: true,
+  },
+})
+
+map.addControl(drawControl)
+
+map.on(L.Draw.Event.CREATED, (e) => {
+  const event = e as L.DrawEvents.Created
+  drawnItems.addLayer(event.layer)
+})
 ```
 
-## Contributing
- 
-To test you can install the npm dependencies:
+### Customizing Language and Text (`L.drawLocal`)
 
-    npm install
+```ts
+import L from 'leaflet'
+import 'leaflet-scribe'
 
-and then use:
+L.drawLocal.draw.toolbar.buttons.polygon = 'Draw a custom polygon!'
+L.drawLocal.draw.handlers.rectangle.tooltip.start = 'Click and drag to draw a box'
+```
 
-    jake test
+### Updating Drawing Handler Options Dynamically
 
-## Thanks
+```ts
+drawControl.setDrawingOptions({
+  rectangle: {
+    shapeOptions: {
+      color: '#0000ff',
+    },
+  },
+})
+```
 
-Touch friendly version was created by Michael Guild (https://github.com/michaelguild13).
+---
+
+## Usage with React (`leaflet-scribe/react`)
+
+Wrap `<EditControl>` inside a `<FeatureGroup>` from `react-leaflet`. Drawn shapes are automatically added to that `<FeatureGroup>` and made editable.
+
+```tsx
+import { MapContainer, TileLayer, FeatureGroup, Circle } from 'react-leaflet'
+import { EditControl } from 'leaflet-scribe/react'
+import 'leaflet/dist/leaflet.css'
+import 'leaflet-scribe/styles.css'
+
+export function MapEditor() {
+  return (
+    <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: '100vh' }}>
+      <TileLayer
+        attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <FeatureGroup>
+        <EditControl
+          position="topright"
+          onCreated={(e) => console.log('Created:', e.layerType, e.layer)}
+          onEdited={(e) => console.log('Edited:', e.layers)}
+          onDeleted={(e) => console.log('Deleted:', e.layers)}
+          draw={{
+            rectangle: false,
+          }}
+        />
+        <Circle center={[51.51, -0.06]} radius={200} />
+      </FeatureGroup>
+    </MapContainer>
+  )
+}
+```
+
+### `<EditControl>` Props
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `position` | `L.ControlPosition` | Control corner position (`'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'`) |
+| `draw` | `ControlDrawToolbarOptions \| false` | Enable/disable or configure draw handlers (`polyline`, `polygon`, `rectangle`, `circle`, `marker`, `circlemarker`) |
+| `edit` | `Omit<ControlEditToolbarOptions, 'featureGroup'> \| false` | Enable/disable or configure edit & delete handlers |
+| `onMounted` | `(control: L.Control.Draw) => void` | Invoked when the `L.Control.Draw` instance is added to the map |
+| `onCreated` | `(e: L.DrawEvents.Created) => void` | Hook to `draw:created` |
+| `onEdited` | `(e: L.DrawEvents.Edited) => void` | Hook to `draw:edited` |
+| `onDeleted` | `(e: L.DrawEvents.Deleted) => void` | Hook to `draw:deleted` |
+| `onDrawStart` | `(e: L.DrawEvents.DrawStart) => void` | Hook to `draw:drawstart` |
+| `onDrawStop` | `(e: L.DrawEvents.DrawStop) => void` | Hook to `draw:drawstop` |
+| `onDrawVertex` | `(e: L.DrawEvents.DrawVertex) => void` | Hook to `draw:drawvertex` |
+| `onEditStart` | `(e: L.DrawEvents.EditStart) => void` | Hook to `draw:editstart` |
+| `onEditMove` | `(e: L.DrawEvents.EditMove) => void` | Hook to `draw:editmove` |
+| `onEditResize` | `(e: L.DrawEvents.EditResize) => void` | Hook to `draw:editresize` |
+| `onEditVertex` | `(e: L.DrawEvents.EditVertex) => void` | Hook to `draw:editvertex` |
+| `onEditStop` | `(e: L.DrawEvents.EditStop) => void` | Hook to `draw:editstop` |
+| `onDeleteStart` | `(e: L.DrawEvents.DeleteStart) => void` | Hook to `draw:deletestart` |
+| `onDeleteStop` | `(e: L.DrawEvents.DeleteStop) => void` | Hook to `draw:deletestop` |
+| `onToolbarOpened` | `(e: L.DrawEvents.ToolbarOpened) => void` | Hook to `draw:toolbaropened` |
+| `onToolbarClosed` | `(e: L.DrawEvents.ToolbarClosed) => void` | Hook to `draw:toolbarclosed` |
+| `onMarkerContext` | `(e: L.DrawEvents.MarkerContext) => void` | Hook to `draw:markercontext` |
+
+---
+
+## Development
+
+```bash
+npm install
+npm run lint:lib
+npm run typecheck:lib
+npm run test:lib
+npm run build:lib
+```
+
+## License
+
+MIT

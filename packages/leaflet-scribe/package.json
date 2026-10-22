@@ -1,0 +1,146 @@
+{
+  "name": "leaflet-scribe",
+  "version": "1.0.7",
+  "description": "Vector drawing and editing toolkit for Leaflet maps — draw and edit polylines, polygons, rectangles, circles, circle markers, and markers. Optional React bindings.",
+  "type": "module",
+  "sideEffects": true,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "style": "./dist/leaflet.draw.css",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "default": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./dist/index.d.ts",
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "default": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": {
+        "types": "./dist/react.d.ts",
+        "default": "./dist/react.js"
+      },
+      "require": {
+        "types": "./dist/react.d.cts",
+        "default": "./dist/react.cjs"
+      },
+      "default": "./dist/react.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./dist/leaflet.draw.css": "./dist/leaflet.draw.css",
+    "./dist/leaflet.draw-src.css": "./dist/leaflet.draw-src.css",
+    "./dist/leaflet.draw.js": "./dist/leaflet.draw.js",
+    "./dist/images/*": "./dist/images/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "author": "Yusuf Arslan",
+  "contributors": [
+    {
+      "name": "Yusuf Arslan",
+      "email": "yusufarsln98@outlook.com"
+    }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yusufarsln98/leaflet-scribe.git",
+    "directory": "packages/leaflet-scribe"
+  },
+  "bugs": {
+    "url": "https://github.com/yusufarsln98/leaflet-scribe/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "keywords": [
+    "maps",
+    "leaflet",
+    "leaflet-scribe",
+    "leaflet-draw",
+    "client",
+    "vector",
+    "drawing",
+    "draw",
+    "edit",
+    "editor",
+    "gis",
+    "framework-agnostic",
+    "vanilla-js",
+    "react",
+    "react-leaflet"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src --ext ts,tsx",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "version": "changeset version",
+    "release": "npm run build && changeset publish"
+  },
+  "peerDependencies": {
+    "leaflet": "^1.7.0 || ^1.8.0 || ^1.9.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "react-leaflet": "^4.0.0 || ^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "react-leaflet": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.2.0",
+    "@types/leaflet": "^1.9.16",
+    "@types/node": "^22.13.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.20.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "jsdom": "^26.0.0",
+    "leaflet": "^1.9.4",
+    "prettier": "^3.5.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-leaflet": "^5.0.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.24.0",
+    "vitest": "^3.0.0"
+  }
+}
