@@ -115,6 +115,114 @@ describe('L.Edit', () => {
       expect(poly.editing?.enabled()).toBe(true)
       expect(poly.options.poly?.allowIntersection).toBe(false)
     })
+
+    it('keeps vertex and middle markers synchronized when inserting on the closing edge and deleting vertices', () => {
+      const polygon = new L.Polygon([
+        L.latLng(0, 0),
+        L.latLng(0, 10),
+        L.latLng(10, 10),
+        L.latLng(10, 0),
+      ])
+      drawnItems.addLayer(polygon)
+      edit.enable()
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const polyEdit = polygon.editing as any
+      const verticesHandler = polyEdit._verticesHandlers[0]
+
+      // 4 vertices + 4 middle markers = 8 layers in _markerGroup
+      expect(verticesHandler._markers.length).toBe(4)
+      expect(verticesHandler._markerGroup.getLayers().length).toBe(8)
+
+      // Click the middle marker on the closing edge (between last vertex and first vertex)
+      const closingMiddleMarker = verticesHandler._markers[0]._middleLeft
+      closingMiddleMarker.fire('click')
+
+      // Now 5 vertices + 5 middle markers = 10 layers
+      expect(verticesHandler._markers.length).toBe(5)
+      expect(verticesHandler._defaultShape().length).toBe(5)
+      expect(verticesHandler._markerGroup.getLayers().length).toBe(10)
+
+      // Click one of the new middle markers to insert a 6th vertex
+      const secondMiddleMarker = verticesHandler._markers[0]._middleLeft
+      secondMiddleMarker.fire('click')
+
+      expect(verticesHandler._markers.length).toBe(6)
+      expect(verticesHandler._defaultShape().length).toBe(6)
+      expect(verticesHandler._markerGroup.getLayers().length).toBe(12)
+
+      // Verify every marker's _index matches its position in _markers and _defaultShape()
+      for (let i = 0; i < verticesHandler._markers.length; i++) {
+        expect(verticesHandler._markers[i]._index).toBe(i)
+        expect(verticesHandler._markers[i]._origLatLng).toBe(
+          verticesHandler._defaultShape()[i],
+        )
+      }
+
+      // Click the two newly inserted vertices to delete them
+      verticesHandler._markers[0].fire('click')
+      expect(verticesHandler._markers.length).toBe(5)
+      expect(verticesHandler._defaultShape().length).toBe(5)
+      expect(verticesHandler._markerGroup.getLayers().length).toBe(10)
+
+      verticesHandler._markers[0].fire('click')
+      expect(verticesHandler._markers.length).toBe(4)
+      expect(verticesHandler._defaultShape().length).toBe(4)
+      expect(verticesHandler._markerGroup.getLayers().length).toBe(8)
+    })
+
+    it('refreshes edit markers cleanly when setLatLngs is called before or during editing', () => {
+      const polygon = new L.Polygon([
+        L.latLng(0, 0),
+        L.latLng(0, 10),
+        L.latLng(10, 10),
+        L.latLng(10, 0),
+      ])
+      drawnItems.addLayer(polygon)
+
+      // Update latlngs before enabling edit
+      polygon.setLatLngs([
+        L.latLng(1, 1),
+        L.latLng(1, 5),
+        L.latLng(5, 5),
+      ])
+
+      edit.enable()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const polyEdit = polygon.editing as any
+      expect(polyEdit._verticesHandlers[0]._markers.length).toBe(3)
+      expect(polyEdit._verticesHandlers[0]._markerGroup.getLayers().length).toBe(6)
+
+      // Update latlngs while editing is enabled
+      const oldMarkerGroup = polyEdit._verticesHandlers[0]._markerGroup
+      polygon.setLatLngs([
+        L.latLng(2, 2),
+        L.latLng(2, 8),
+        L.latLng(8, 8),
+        L.latLng(8, 2),
+        L.latLng(5, 0),
+      ])
+
+      expect(map.hasLayer(oldMarkerGroup)).toBe(false)
+      expect(polyEdit._verticesHandlers[0]._markers.length).toBe(5)
+      expect(polyEdit._verticesHandlers[0]._markerGroup.getLayers().length).toBe(10)
+    })
+
+    it('removes _markerGroup from the map when the polygon is removed from the map while editing', () => {
+      const polygon = new L.Polygon([
+        L.latLng(0, 0),
+        L.latLng(0, 10),
+        L.latLng(10, 10),
+      ]).addTo(map)
+      polygon.editing?.enable()
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const markerGroup = (polygon.editing as any)._verticesHandlers[0]._markerGroup
+      expect(map.hasLayer(markerGroup)).toBe(true)
+
+      map.removeLayer(polygon)
+      expect(map.hasLayer(markerGroup)).toBe(false)
+    })
   })
 
   describe('L.EditToolbar.Delete', () => {
