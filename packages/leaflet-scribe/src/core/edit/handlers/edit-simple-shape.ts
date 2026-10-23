@@ -59,16 +59,23 @@ export const EditSimpleShape = L.Handler.extend({
 
     shape.setStyle(shape.options.original)
 
-    if (shape._map) {
-      this._unbindMarker(this._moveMarker)
-
-      for (let i = 0, l = this._resizeMarkers.length; i < l; i++) {
-        this._unbindMarker(this._resizeMarkers[i])
+    const map = shape._map || this._map
+    if (map) {
+      if (this._moveMarker) {
+        this._unbindMarker(this._moveMarker)
       }
-      this._resizeMarkers = null
 
-      this._map.removeLayer(this._markerGroup)
-      delete this._markerGroup
+      if (this._resizeMarkers) {
+        for (let i = 0, l = this._resizeMarkers.length; i < l; i++) {
+          this._unbindMarker(this._resizeMarkers[i])
+        }
+        this._resizeMarkers = null
+      }
+
+      if (this._markerGroup) {
+        map.removeLayer(this._markerGroup)
+        delete this._markerGroup
+      }
     }
 
     this._map = null

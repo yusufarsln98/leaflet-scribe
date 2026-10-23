@@ -30,6 +30,9 @@ export const EditPoly = L.Handler.extend({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _eachVertexHandler(callback: (handler: any) => void) {
+    if (!this._verticesHandlers) {
+      return
+    }
     for (let i = 0; i < this._verticesHandlers.length; i++) {
       callback(this._verticesHandlers[i])
     }
@@ -48,6 +51,7 @@ export const EditPoly = L.Handler.extend({
     this._eachVertexHandler((handler: any) => {
       handler.removeHooks()
     })
+    this._verticesHandlers = []
   },
 
   updateMarkers() {
@@ -58,6 +62,10 @@ export const EditPoly = L.Handler.extend({
   },
 
   _initHandlers() {
+    if (this._verticesHandlers && this._verticesHandlers.length > 0) {
+      this.removeHooks()
+    }
+    this._syncLatLngsFromPoly()
     this._verticesHandlers = []
     for (let i = 0; i < this.latlngs.length; i++) {
       this._verticesHandlers.push(
@@ -70,11 +78,22 @@ export const EditPoly = L.Handler.extend({
     }
   },
 
+  _syncLatLngsFromPoly() {
+    this.latlngs = [this._poly._latlngs]
+    if (this._poly._holes) {
+      this.latlngs = this.latlngs.concat(this._poly._holes)
+    }
+  },
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _updateLatLngs(e: any) {
     this.latlngs = [e.layer._latlngs]
     if (e.layer._holes) {
       this.latlngs = this.latlngs.concat(e.layer._holes)
+    }
+    if (this.enabled() && this._verticesHandlers && this._verticesHandlers.length > 0) {
+      this.removeHooks()
+      this.addHooks()
     }
   },
 })
@@ -178,11 +197,13 @@ export const EditPolyVerticesEdit = L.Handler.extend({
 
     poly.setStyle(poly.options.original)
 
-    if (poly._map) {
-      poly._map.removeLayer(this._markerGroup)
-      delete this._markerGroup
-      delete this._markers
+    const map = poly._map || this._map
+    if (map && this._markerGroup) {
+      map.removeLayer(this._markerGroup)
     }
+    delete this._markerGroup
+    delete this._markers
+    this._map = null
   },
 
   updateMarkers() {
@@ -257,12 +278,13 @@ export const EditPolyVerticesEdit = L.Handler.extend({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _removeMarker(marker: any) {
-    const i = marker._index
+    const idx = this._markers.indexOf(marker)
+    const i = idx !== -1 ? idx : marker._index
 
     this._markerGroup.removeLayer(marker)
     this._markers.splice(i, 1)
     this._spliceLatLngs(i, 1)
-    this._updateIndexes(i, -1)
+    this._syncMarkerIndexes()
 
     marker
       .off('dragstart', this._onMarkerDragStart, this)
@@ -393,6 +415,15 @@ export const EditPolyVerticesEdit = L.Handler.extend({
     this.updateMarkers()
   },
 
+  _syncMarkerIndexes() {
+    if (!this._markers) {
+      return
+    }
+    for (let idx = 0; idx < this._markers.length; idx++) {
+      this._markers[idx]._index = idx
+    }
+  },
+
   _updateIndexes(index: number, delta: number) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this._markerGroup.eachLayer((marker: any) => {
@@ -411,9 +442,21 @@ export const EditPolyVerticesEdit = L.Handler.extend({
 
     marker1._middleRight = marker2._middleLeft = marker
 
+    let promoted = false
+    let finalized = false
+
     const onDragStart = () => {
+      if (promoted) {
+        return
+      }
+      promoted = true
+
+      marker.off('dragstart', onDragStart, this)
       marker.off('touchmove', onDragStart, this)
-      const i = marker2._index
+      marker.off('MSPointerMove', onDragStart, this)
+
+      const idx2 = this._markers.indexOf(marker2)
+      const i = idx2 !== -1 ? idx2 : marker2._index
 
       marker._index = i
 
@@ -426,8 +469,13 @@ export const EditPolyVerticesEdit = L.Handler.extend({
 
       marker.setOpacity(1)
 
-      this._updateIndexes(i, 1)
-      marker2._index++
+      this._syncMarkerIndexes()
+      if (marker1._middleRight === marker) {
+        marker1._middleRight = null
+      }
+      if (marker2._middleLeft === marker) {
+        marker2._middleLeft = null
+      }
       this._updatePrevNext(marker1, marker)
       this._updatePrevNext(marker, marker2)
 
@@ -435,12 +483,24 @@ export const EditPolyVerticesEdit = L.Handler.extend({
     }
 
     const onDragEnd = () => {
+      if (finalized) {
+        return
+      }
+      finalized = true
+
       marker.off('dragstart', onDragStart, this)
       marker.off('dragend', onDragEnd, this)
       marker.off('touchmove', onDragStart, this)
+      marker.off('touchend', onDragEnd, this)
+      marker.off('MSPointerMove', onDragStart, this)
+      marker.off('MSPointerUp', onDragEnd, this)
 
-      this._createMiddleMarker(marker1, marker)
-      this._createMiddleMarker(marker, marker2)
+      if (marker._prev) {
+        this._createMiddleMarker(marker._prev, marker)
+      }
+      if (marker._next) {
+        this._createMiddleMarker(marker, marker._next)
+      }
     }
 
     const onClick = () => {
@@ -454,6 +514,9 @@ export const EditPolyVerticesEdit = L.Handler.extend({
       .on('dragstart', onDragStart, this)
       .on('dragend', onDragEnd, this)
       .on('touchmove', onDragStart, this)
+      .on('touchend', onDragEnd, this)
+      .on('MSPointerMove', onDragStart, this)
+      .on('MSPointerUp', onDragEnd, this)
 
     this._markerGroup.addLayer(marker)
   },
@@ -479,6 +542,25 @@ export const EditPolyVerticesEdit = L.Handler.extend({
 })
 
 L.Edit.PolyVerticesEdit = EditPolyVerticesEdit
+
+const originalSetLatLngs = L.Polyline.prototype.setLatLngs
+L.Polyline.prototype.setLatLngs = function (
+  this: LTypes.Polyline,
+  latlngs:
+    | LTypes.LatLngExpression[]
+    | LTypes.LatLngExpression[][]
+    | LTypes.LatLngExpression[][][],
+) {
+  const result = originalSetLatLngs.call(this, latlngs)
+  if (this.editing && '_updateLatLngs' in this.editing) {
+    ;(
+      this.editing as unknown as {
+        _updateLatLngs: (e: { layer: LTypes.Polyline }) => void
+      }
+    )._updateLatLngs({ layer: this })
+  }
+  return result
+}
 
 L.Polyline.addInitHook(function (this: LTypes.Polyline) {
   if (this.editing) {
